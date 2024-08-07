@@ -1,6 +1,5 @@
   <h1 align="center"> Programacion Concurrente </h1>
   <div align="center">
-  <h2>Links utiles</h2>
   <div >
     <a href="https://youtube.com/playlist?list=PLH8A0IjFldaGLATsgRdmPBtiNcp5KmAHo">Playlist clases de teoria</a>
   </div>
