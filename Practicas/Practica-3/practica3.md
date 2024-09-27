@@ -60,13 +60,36 @@ de llegada?</summary>
     <summary>a) Analice el problema y defina qué procesos, recursos y monitores serán necesarios/convenientes,  además  de  las  posibles  sincronizaciones  requeridas  para resolver el problema.</summary>
     </details>
     <details>
-    <summary>b) Implemente el acceso a la base por parte de los procesos, sabiendo que el motor de base de datos puede atender a lo sumo 5 consultas de lectura simultáneas.</summary>    
-    </details>
-
-</details>
+    <summary> b) Implemente el acceso a la base por parte de los procesos, sabiendo que el motor de base de datos puede atender a lo sumo 5 consultas de lectura simultáneas.
+    </summary>
 
 
+``` java
+    Monitor MotorBDD{
+	int lugares = 0;
+	cond cola;
+	
+	procedure pasar(){
+		if(lugares == 5 ){ // si no hay lugar en la BDD me duermo 
+			wait(cola);
+		}
+		// si hay lugar
+		lugares++;
+	}
+	procedure salir(){
+			signal(cola);
+			// podria otro proceso entrar antes del que desperte ?
+			lugares--;	
+	}
+}
+```
+``` java
+  Process proceso[id:0..N-1]{
+	Monitor.pasar();
+	leerBaseDeDatos();
+	Monitor.salir();
 
-<details>
-    <summary></summary>
+}
+```
+  </details>
 </details>
