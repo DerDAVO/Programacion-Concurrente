@@ -114,24 +114,93 @@ process persona[id:0..N-1]{
 ```
 </details>
 <details><summary>b) Modifique la solución de (a) para el caso en que se deba respetar el orden de llegada.</summary>
-</details>
 
 ``` java
-Monitor impresora{
+Monitor Impresora{
+	cond cola;
+	boolean libre=true;
+	int cant=0;
+	
+	Procedure pasar(){
+		if( !libre ){
+			cant++;
+			wait(cola);
+		}
+		libre=false;
+	}
+	
 	Procedure Fotocopiar(doc:in Documento,aux:out Fotocopia ){
 		aux = fotocopiar(doc);
 	}
-}
-process persona[id:0..N-1]{
-	Documento doc;
-	Impresora.pasar()
-	Impresora.Fotocopiar(doc);
+	
+	procedure salir(){
+		if(cant > 0){
+			cant--;
+			signal(cola);
+		}
+		libre=true;
+	}
+	
 }
 
+
+process Persona[id:0..N-1]{
+	Fotocopia copia;
+	Documento doc;
+	
+	Impresora.pasar();
+	Impresora.Fotocopiar(doc,copia); //persona usando la fotocopiaodora
+	Impresora.salir();
+}
+ 
 ```
+</details>
 <details><summary>c) Modifique la solución de (b) para el caso en que se deba dar prioridad de acuerdo con la 
 edad de cada persona (cuando la fotocopiadora está libre la debe usar la persona de mayor 
 edad entre las que estén esperando para usarla).</summary>
+
+``` java
+Monitor Impresora{
+	cond espera[N];
+	boolean libre=true;
+	int cant=0;
+	colaOrdenada fila;
+	int proximo;
+	Procedure pasar(id,edad : in int){
+		if( !libre ){
+			cant++;
+			insertar(fila,edad,id); // las personas son agregadas por edad
+			wait(espera[id]);
+		}
+		libre=false;
+	}
+	
+	Procedure Fotocopiar(doc:in Documento,aux:out Fotocopia ){
+		aux = fotocopiar(doc);
+	}
+	
+	procedure salir(){
+		if(cant > 0){
+			cant--;
+			sacar(fila,proximo); 
+			signal(espera[proximo]);
+		}
+		libre=true;
+	}
+	
+}
+
+	
+process Persona[id:0..N-1]{
+	Fotocopia copia;
+	Documento doc;
+	
+	Impresora.pasar();
+	Impresora.Fotocopiar(doc,copia); //persona usando la fotocopiaodora
+	Impresora.salir();
+}
+ 
+```
 </details>
 <details><summary>d) Modifique la solución de (a) para el caso en que se deba respetar estrictamente el orden dado por el identificador del proceso (la persona X no puede usar la fotocopiadora hasta que no haya terminado de usarla la persona X-1).</summary>
 </details>
