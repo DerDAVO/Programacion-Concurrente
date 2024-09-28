@@ -99,9 +99,36 @@ usada  por  una  persona  a  la  vez.  Analice  el  problema  y  defina  qué  p
 monitores serán necesarios/convenientes, además de las posibles sincronizaciones requeridas 
 para resolver el problema. Luego, resuelva considerando las siguientes situaciones:</summary>
 <details><summary>a) Implemente  una  solución  suponiendo  no  importa el  orden  de  uso.  Existe  una  función Fotocopiar() que simula el uso de la fotocopiadora.</summary>
+
+``` java
+Monitor impresora{
+	Procedure Fotocopiar(doc:in Documento,aux:out Fotocopia ){
+		aux = fotocopiar(doc);
+	}
+}
+process persona[id:0..N-1]{
+	Documento doc;
+	Impresora.Fotocopiar(doc);
+}
+ 
+```
 </details>
 <details><summary>b) Modifique la solución de (a) para el caso en que se deba respetar el orden de llegada.</summary>
 </details>
+
+``` java
+Monitor impresora{
+	Procedure Fotocopiar(doc:in Documento,aux:out Fotocopia ){
+		aux = fotocopiar(doc);
+	}
+}
+process persona[id:0..N-1]{
+	Documento doc;
+	Impresora.pasar()
+	Impresora.Fotocopiar(doc);
+}
+
+```
 <details><summary>c) Modifique la solución de (b) para el caso en que se deba dar prioridad de acuerdo con la 
 edad de cada persona (cuando la fotocopiadora está libre la debe usar la persona de mayor 
 edad entre las que estén esperando para usarla).</summary>
